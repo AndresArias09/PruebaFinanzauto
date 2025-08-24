@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Domain.Dto;
+using Domain.Exceptions;
+using Domain.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,17 +15,24 @@ namespace EjemploApi.API.Controllers
     {
         private readonly ILogger<AuthController> _logger;
         private readonly IConfiguration _configuration;
-
-        public AuthController(ILogger<AuthController> logger, IConfiguration configuration)
+        private readonly IUsuarioService _usuarioService;
+        public AuthController
+        (
+            ILogger<AuthController> logger,
+            IConfiguration configuration,
+            IUsuarioService usuarioService
+        )
         {
             _logger = logger;
             _configuration = configuration;
+            _usuarioService = usuarioService;
         }
 
-        private bool ValidarUsuario(LoginModel model)
+        private async Task<bool> ValidarUsuario(LoginRequest model)
         {
-            //Aquí debe ir el mecanismo de autenticación real, este es solo demostrativo y no debe usarse así para ambientes reales
-            if (model.Username.Equals("Admin") && model.Password.Equals("123"))
+            var resultUser = await _usuarioService.ValidarLogin(model);
+
+            if (resultUser.IsSuccess)
             {
                 return true;
             }
@@ -31,11 +41,11 @@ namespace EjemploApi.API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginModel model)
+        public async Task<ActionResult> Login([FromBody] LoginRequest model)
         {
             try
             {
-                if (!ValidarUsuario(model))
+                if (!await ValidarUsuario(model))
                 {
                     return Unauthorized("Credenciales no válidas");
                 }
@@ -46,7 +56,7 @@ namespace EjemploApi.API.Controllers
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                    new Claim(ClaimTypes.Name, model.Username),
+                        new Claim(ClaimTypes.Name, model.User),
                     }),
                     Expires = DateTime.UtcNow.AddHours(1),
                     Issuer = _configuration.GetSection("ApiAuth:TokenIssuer").Value!,
@@ -58,6 +68,10 @@ namespace EjemploApi.API.Controllers
 
                 return Ok(new { Token = tokenString });
             }
+            catch (UserCredentialsNotValidException exe)
+            {
+                return Unauthorized(exe.Message);
+            }
             catch (Exception exe)
             {
                 _logger.LogError(exe, "Error al realizar login");
@@ -66,11 +80,4 @@ namespace EjemploApi.API.Controllers
             return Problem(detail: "Ha ocurrido un error al validar el login");
         }
     }
-
-    public class LoginModel
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
 }

@@ -28,12 +28,14 @@ namespace Infraestructure.Persistence
 
         public virtual async Task<IEnumerable<T>> Get(CancellationToken cancellationToken)
         {
-            return await _dbContext.Set<T>().ToListAsync(cancellationToken);
+            return await _dbContext.Set<T>().AsNoTracking()
+                .ToListAsync(cancellationToken);
         }
 
         public virtual async Task<T> GetById(long id, CancellationToken cancellationToken)
         {
-            return await _dbContext.Set<T>().FirstOrDefaultAsync(_ => _.Id == id, cancellationToken);
+            return await _dbContext.Set<T>().AsNoTracking()
+                .FirstOrDefaultAsync(_ => _.Id == id, cancellationToken);
         }
 
         public virtual async Task<T> SaveInfo(T entity, CancellationToken cancellationToken)

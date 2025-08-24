@@ -1,3 +1,4 @@
+using Application;
 using EjemploApi.API;
 using EjemploAPI.Api;
 using Infraestructure;
@@ -28,6 +29,7 @@ try
     #region Capas
     //Infraestructure
     builder.Services.AddInfraestructure(builder.Configuration);
+    builder.Services.AddApplication();
 
     //Api
     builder.Services.AddApi(builder.Configuration);

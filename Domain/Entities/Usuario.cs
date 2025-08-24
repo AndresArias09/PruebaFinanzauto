@@ -5,7 +5,7 @@ namespace Domain.Entities
     [Table("Usuario")]
     public class Usuario : BaseEntity
     {
-        public string? NombreUsuario { get; set; }
-        public string? Contraseña { get; set; }
+        public string? UserName { get; set; }
+        public string? Password { get; set; }
     }
 }

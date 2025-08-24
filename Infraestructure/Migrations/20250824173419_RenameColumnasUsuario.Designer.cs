@@ -4,6 +4,7 @@ using Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infraestructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250824173419_RenameColumnasUsuario")]
+    partial class RenameColumnasUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -262,23 +265,25 @@ namespace Infraestructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Contraseña")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateLastUpdate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NombreUsuario")
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DateAdded");
 
-                    b.HasIndex("NombreUsuario");
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("Usuario", (string)null);
 
@@ -286,9 +291,9 @@ namespace Infraestructure.Migrations
                         new
                         {
                             Id = 1L,
-                            Contraseña = "B9A465912169BEF97138C76EFDFD5BB34FDC5FA58855AC187817AE07E80ABE5E-5929B1B6239B2767DDEDDABC98823ADF",
                             DateAdded = new DateTime(2025, 8, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NombreUsuario = "admin"
+                            Password = "B9A465912169BEF97138C76EFDFD5BB34FDC5FA58855AC187817AE07E80ABE5E-5929B1B6239B2767DDEDDABC98823ADF",
+                            UserName = "admin"
                         });
                 });
 
