@@ -29,5 +29,11 @@ namespace Infraestructure.Persistence.Repositories
 
             return entities > 0;
         }
+
+        public async Task<Estudiante> GetEstudianteByNumDoc(string numDoc, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Estudiantes.AsNoTracking()
+                .FirstOrDefaultAsync(_ => _.DocumentId.Equals(numDoc), cancellationToken);
+        }
     }
 }

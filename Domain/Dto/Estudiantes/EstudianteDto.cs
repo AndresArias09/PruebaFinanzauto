@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Domain.Dto.EstudianteDto
+namespace Domain.Dto.Estudiantes
 {
     public class EstudianteDto : CrearEstudianteRequest
     {

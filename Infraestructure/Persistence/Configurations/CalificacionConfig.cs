@@ -10,6 +10,7 @@ namespace Infraestructure.Persistence.Configurations
         {
             builder.ToTable("Calificacion");
 
+            builder.Property(_ => _.Concept).HasColumnType("nvarchar(300)");
             builder.Property(_ => _.Value)
                 .HasColumnType("decimal(18,2)");
 

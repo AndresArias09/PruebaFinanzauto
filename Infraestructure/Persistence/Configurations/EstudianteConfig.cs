@@ -10,6 +10,11 @@ namespace Infraestructure.Persistence.Configurations
         {
             builder.ToTable("Estudiante");
 
+            builder.Property(_ => _.DocumentId).HasColumnType("nvarchar(200)");
+            builder.Property(_ => _.Names).HasColumnType("nvarchar(400)");
+            builder.Property(_ => _.Surnames).HasColumnType("nvarchar(400)");
+            builder.Property(_ => _.Email).HasColumnType("nvarchar(300)");
+
             builder.HasIndex(_ => _.DateAdded);
             builder.HasIndex(_ => _.EntryDate);
             builder.HasIndex(_ => _.DocumentId)

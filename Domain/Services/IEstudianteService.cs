@@ -1,4 +1,4 @@
-﻿using Domain.Dto.EstudianteDto;
+﻿using Domain.Dto.Estudiantes;
 using Domain.Entities;
 
 namespace Domain.Services
@@ -10,5 +10,6 @@ namespace Domain.Services
         public Task<Result<bool>> EliminarEstudiante(long id, CancellationToken cancellationToken);
         public Task<IEnumerable<EstudianteDto>> ConsultarEstudiantes(CancellationToken cancellationToken);
         public Task<EstudianteDto> GetEstudianteById(long id, CancellationToken cancellationToken);
+        public Task<EstudianteDto> GetEstudianteByNumDoc(string numDoc, CancellationToken cancellationToken);
     }
 }

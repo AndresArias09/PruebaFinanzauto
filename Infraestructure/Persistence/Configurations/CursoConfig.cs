@@ -9,6 +9,7 @@ namespace Infraestructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Curso> builder)
         {
             builder.ToTable("Curso");
+            builder.Property(_ => _.Name).HasColumnType("nvarchar(200)");
 
             builder.HasIndex(_ => _.StartDate);
 

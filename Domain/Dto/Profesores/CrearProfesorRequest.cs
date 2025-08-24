@@ -1,6 +1,6 @@
-﻿namespace Domain.Dto.EstudianteDto
+﻿namespace Domain.Dto.Profesores
 {
-    public class CrearEstudianteRequest
+    public class CrearProfesorRequest
     {
         public string NumeroDocumento { get; set; } = string.Empty;
         public string Nombres { get; set; } = string.Empty;

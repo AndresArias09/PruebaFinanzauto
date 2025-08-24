@@ -1,4 +1,4 @@
-﻿namespace Domain.Dto.EstudianteDto
+﻿namespace Domain.Dto.Estudiantes
 {
     public class ActualizarEstudianteRequest : CrearEstudianteRequest
     {

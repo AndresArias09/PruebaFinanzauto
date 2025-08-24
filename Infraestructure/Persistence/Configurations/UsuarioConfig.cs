@@ -9,6 +9,8 @@ namespace Infraestructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Usuario> builder)
         {
             builder.ToTable("Usuario");
+            builder.Property(_ => _.UserName).HasColumnType("nvarchar(500)");
+            builder.Property(_ => _.Password).HasColumnType("nvarchar(500)");
 
             builder.HasIndex(_ => _.DateAdded);
             builder.HasIndex(_ => _.UserName)

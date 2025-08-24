@@ -1,12 +1,12 @@
 ﻿using Domain.Constants;
-using Domain.Dto.Estudiantes;
+using Domain.Dto.Profesores;
 using FluentValidation;
 
 namespace Application.Validators
 {
-    public class EstudianteValidator : AbstractValidator<CrearEstudianteRequest>
+    public class ProfesorValidator : AbstractValidator<CrearProfesorRequest>
     {
-        public EstudianteValidator()
+        public ProfesorValidator()
         {
             RuleFor(_ => _.NumeroDocumento)
                 .Cascade(CascadeMode.Stop)

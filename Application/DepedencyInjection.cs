@@ -10,6 +10,9 @@ namespace Application
         {
             //Services
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IEstudianteService, EstudianteService>();
+            services.AddScoped<IProfesorService, ProfesorService>();
+            services.AddScoped<ICursoService, CursoService>();
 
             return services;
         }

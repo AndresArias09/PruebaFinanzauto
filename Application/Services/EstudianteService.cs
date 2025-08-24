@@ -1,5 +1,5 @@
 ﻿using Application.Validators;
-using Domain.Dto.EstudianteDto;
+using Domain.Dto.Estudiantes;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Repositories;
@@ -17,6 +17,13 @@ namespace Application.Services
         }
         public async Task<Result<EstudianteDto>> GuardarNuevoEstudiante(CrearEstudianteRequest request, CancellationToken cancellationToken)
         {
+            var temp = await _estudianteRepository.GetEstudianteByNumDoc(request.NumeroDocumento, cancellationToken);
+
+            if (temp is not null)
+            {
+                return Result<EstudianteDto>.Failure("Ya existe un estudiante con el número de documento indicado");
+            }
+
             var validator = new EstudianteValidator();
 
             var resultValidation = validator.Validate(request);
@@ -49,6 +56,14 @@ namespace Application.Services
             if (temp is null)
             {
                 throw new EntityNotFoundException("Registro no encontrado");
+            }
+
+            //Validar que no se repita el número de documento
+            temp = await _estudianteRepository.GetEstudianteByNumDoc(request.NumeroDocumento, cancellationToken);
+
+            if (temp is not null && temp.Id != request.Id)
+            {
+                return Result<EstudianteDto>.Failure("Ya existe un estudiante con el número de documento indicado");
             }
 
             var validator = new EstudianteValidator();
@@ -109,6 +124,17 @@ namespace Application.Services
         public async Task<EstudianteDto> GetEstudianteById(long id, CancellationToken cancellationToken)
         {
             var estudiante = await _estudianteRepository.GetById(id, cancellationToken);
+
+            if (estudiante is null) throw new EntityNotFoundException("No existe el registro");
+
+            return EstudianteDto.GetFromModel(estudiante);
+        }
+
+        public async Task<EstudianteDto> GetEstudianteByNumDoc(string numDoc, CancellationToken cancellationToken)
+        {
+            var estudiante = await _estudianteRepository.GetEstudianteByNumDoc(numDoc, cancellationToken);
+
+            if (estudiante is null) throw new EntityNotFoundException("No existe el registro");
 
             return EstudianteDto.GetFromModel(estudiante);
         }
