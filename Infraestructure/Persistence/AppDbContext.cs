@@ -26,6 +26,7 @@ namespace Infraestructure.Persistence
             modelBuilder.ApplyConfiguration(new ProfesorConfig());
             modelBuilder.ApplyConfiguration(new CursoConfig());
             modelBuilder.ApplyConfiguration(new CursoEstudianteConfig());
+            modelBuilder.ApplyConfiguration(new CalificacionConfig());
 
             base.OnModelCreating(modelBuilder);
         }

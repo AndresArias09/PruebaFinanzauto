@@ -20,7 +20,7 @@ namespace Infraestructure.Persistence.Configurations
 
             builder.HasOne(_ => _.CursoEstudiante)
                 .WithMany(_ => _.Calificaciones)
-                .OnDelete(DeleteBehavior.ClientNoAction)
+                .OnDelete(DeleteBehavior.NoAction)
                 .HasForeignKey(_ => _.IdCursoEstudiante);
         }
     }

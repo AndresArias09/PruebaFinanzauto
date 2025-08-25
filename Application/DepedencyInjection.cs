@@ -13,6 +13,7 @@ namespace Application
             services.AddScoped<IEstudianteService, EstudianteService>();
             services.AddScoped<IProfesorService, ProfesorService>();
             services.AddScoped<ICursoService, CursoService>();
+            services.AddScoped<ICalificacionService, CalificacionService>();
 
             return services;
         }
