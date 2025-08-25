@@ -1,4 +1,6 @@
-﻿using Domain.Entities;
+﻿using Domain.Dto;
+using Domain.Dto.Estudiantes;
+using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +38,38 @@ namespace Infraestructure.Persistence.Repositories
         {
             return await _dbContext.Estudiantes.AsNoTracking()
                 .FirstOrDefaultAsync(_ => _.DocumentId.Equals(numDoc), cancellationToken);
+        }
+
+        public async Task<PaginatedCollection<EstudianteDto>> GetEstudiantesPaginado(int page, int pageSize, CancellationToken cancellationToken)
+        {
+            var collection = new PaginatedCollection<EstudianteDto>();
+
+            collection.Items = await _dbContext.Estudiantes
+                .AsNoTracking()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(_ =>
+                    new EstudianteDto()
+                    {
+                        Id = _.Id,
+                        Nombres = _.Names,
+                        Apellidos = _.Surnames,
+                        Correo = _.Email,
+                        FechaIngreso = _.EntryDate,
+                        NumeroDocumento = _.DocumentId
+                    }
+                )
+                .ToListAsync(cancellationToken);
+
+            collection.TotalCount = await _dbContext.Estudiantes.CountAsync();
+            collection.TotalPages = (int)Math.Ceiling((double)collection.TotalCount / (double)pageSize);
+            collection.CurrentPage = page;
+            collection.PageSize = pageSize;
+
+            collection.HasNextPage = collection.CurrentPage < collection.TotalPages;
+            collection.HasPreviousPage = collection.CurrentPage != 1;
+
+            return collection;
         }
     }
 }

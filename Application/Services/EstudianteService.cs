@@ -1,4 +1,5 @@
 ﻿using Application.Validators;
+using Domain.Dto;
 using Domain.Dto.Estudiantes;
 using Domain.Entities;
 using Domain.Exceptions;
@@ -137,6 +138,11 @@ namespace Application.Services
             if (estudiante is null) throw new EntityNotFoundException("No existe el registro");
 
             return EstudianteDto.GetFromModel(estudiante);
+        }
+
+        public async Task<PaginatedCollection<EstudianteDto>> GetEstudiantesPaginado(int page, int pageSize, CancellationToken cancellationToken)
+        {
+            return await _estudianteRepository.GetEstudiantesPaginado(page, pageSize, cancellationToken);
         }
     }
 }

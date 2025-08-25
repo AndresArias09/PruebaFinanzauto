@@ -1,4 +1,5 @@
-﻿using Domain.Dto.Estudiantes;
+﻿using Domain.Dto;
+using Domain.Dto.Estudiantes;
 using Domain.Exceptions;
 using Domain.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -182,5 +183,27 @@ namespace API.Controllers
 
             return Problem("Ha ocurrido un error al realizar esta acción");
         }
+
+        [HttpGet("GetPaginated")]
+        public async Task<ActionResult<PaginatedCollection<EstudianteDto>>> GetEstudiantesPaginado(int page, int pageSize, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var estudiantes = await _estudianteService.GetEstudiantesPaginado(page, pageSize, cancellationToken);
+
+                return Ok(estudiantes);
+            }
+            catch (EntityNotFoundException exe)
+            {
+                return NotFound(exe.Message);
+            }
+            catch (Exception exe)
+            {
+                _logger.LogError(exe, $"Error al consultar estudiantes");
+            }
+
+            return Problem("Ha ocurrido un error al realizar esta acción");
+        }
+
     }
 }

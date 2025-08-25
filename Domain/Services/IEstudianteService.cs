@@ -1,4 +1,5 @@
-﻿using Domain.Dto.Estudiantes;
+﻿using Domain.Dto;
+using Domain.Dto.Estudiantes;
 using Domain.Entities;
 
 namespace Domain.Services
@@ -11,5 +12,6 @@ namespace Domain.Services
         public Task<IEnumerable<EstudianteDto>> ConsultarEstudiantes(CancellationToken cancellationToken);
         public Task<EstudianteDto> GetEstudianteById(long id, CancellationToken cancellationToken);
         public Task<EstudianteDto> GetEstudianteByNumDoc(string numDoc, CancellationToken cancellationToken);
+        public Task<PaginatedCollection<EstudianteDto>> GetEstudiantesPaginado(int page, int pageSize, CancellationToken cancellationToken);
     }
 }
