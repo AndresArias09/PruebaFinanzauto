@@ -15,6 +15,7 @@ namespace Infraestructure.Persistence.Repositories
             var curso = await _dbContext.Cursos.AsNoTracking()
                 .Where(_ => _.Id == id)
                 .Include(_ => _.Matriculas)
+                    .ThenInclude(_ => _.Calificaciones)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (curso is null)
@@ -23,6 +24,7 @@ namespace Infraestructure.Persistence.Repositories
             }
 
             _dbContext.CursoEstudiante.RemoveRange(curso.Matriculas);
+            _dbContext.Calificaciones.RemoveRange(curso.Matriculas.SelectMany(_ => _.Calificaciones));
             _dbContext.Cursos.Remove(curso);
 
             int entities = await _dbContext.SaveChangesAsync();
