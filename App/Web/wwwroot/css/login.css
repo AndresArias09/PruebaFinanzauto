@@ -1,0 +1,21 @@
+﻿main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-container {
+    width: clamp(300px, 70%, 500px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+h1{
+    text-align: center;
+}

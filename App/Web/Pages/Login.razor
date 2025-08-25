@@ -1,0 +1,42 @@
+﻿@page "/"
+
+@using Web.Services.Contracts
+
+@layout LoginLayout
+
+@inject IUserAccountService _userAccount;
+
+<div class="login-container">
+    <h1>Ingrese sus credenciales</h1>
+
+    <input type="text" class="form-control" @bind-value="_model.User"/>
+    <input type="password" class="form-control" @bind-value="_model.Password" />
+    <button type="button" class="btn btn-primary" @onclick="Ingresar" >Ingresar</button>
+</div>
+
+@code {
+    private LoginRequest _model = new()
+    {
+        User = "admin",
+        Password = "123"
+    };
+
+    private async Task Ingresar()
+    {
+        await _jsRuntime.NotiflixLoading(NotiflixLoadingType.hourglass, "Procesando");
+
+        var result = await _userAccount.IniciarSesion(_model);
+
+        if (result.IsSuccess)
+        {
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+            await customAuthStateProvider.UpdateAuthenticationState(new UserSession()
+            { Token = result.Value.Token});
+            _navigationManager.NavigateTo("/Home", forceLoad: true);
+        }
+        else
+        {
+            await _jsRuntime.NotiflixReportAlert("Error", result.Error, NotiflixMessageType.failure);
+        }
+    }
+}

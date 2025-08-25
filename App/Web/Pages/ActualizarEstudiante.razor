@@ -1,0 +1,108 @@
+﻿@page "/ActualizarEstudiante/{Id}"
+@using Domain.Dto.Estudiantes
+
+
+@inject EstudianteService _service
+
+<div class="container">
+    <div class="row">
+        <h2>Nuevo Estudiante</h2>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <label>
+                Numero de documento
+            </label>
+            <input type="text" class="form-control" @bind-value="_model.NumeroDocumento">
+        </div>
+        <div class="col-md-6">
+            <label>
+                Nombres
+            </label>
+            <input type="text" class="form-control" @bind-value="_model.Nombres">
+        </div>
+        <div class="col-md-6">
+            <label>
+                Apellidos
+            </label>
+            <input type="text" class="form-control" @bind-value="_model.Apellidos">
+        </div>
+        <div class="col-md-6">
+            <label>
+                Correo
+            </label>
+            <input type="text" class="form-control" @bind-value="_model.Correo">
+        </div>
+        <div class="col-md-6">
+            <label>
+                Fecha de ingreso
+            </label>
+            <input type="date" class="form-control" @bind-value="_model.FechaIngreso">
+        </div>
+
+
+    </div>
+
+    <div class="d-flex justify-content-center mt-3 gx-1" style="gap: 10px">
+        <button type="button" class="btn btn-primary" @onclick="GuardarEstudiante">Aceptar</button>
+        <button type="button" class="btn btn-secondary" @onclick=@(() => _navigationManager.NavigateTo("/Estudiantes"))>Volver</button>
+    </div>
+
+</div>
+
+
+
+@code {
+    [Parameter]
+    public string ? Id { get; set; }
+
+    private EstudianteDto _model = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _jsRuntime.NotiflixLoading(NotiflixLoadingType.hourglass, "Cargando registros");
+
+            var result = await _service.GetEstudianteById(long.Parse(Id));
+
+            if (result.IsSuccess)
+            {
+                _model = result.Value;
+                StateHasChanged();
+            }
+            else
+            {
+                await _jsRuntime.NotiflixReportAlert("Error", result.Error, NotiflixMessageType.failure);
+            }
+
+            await _jsRuntime.NotiflixRemoveLoading();
+        }
+    }
+
+    private async Task GuardarEstudiante()
+    {
+        await _jsRuntime.NotiflixLoading(NotiflixLoadingType.hourglass, "Procesando");
+
+        var result = await _service.ActualizarEstudiante(_model);
+
+        await _jsRuntime.NotiflixRemoveLoading();
+
+        if (result.IsSuccess)
+        {
+            await _jsRuntime.NotiflixReportAlert("Correcto", "Estudiante actualizado exitosamente", NotiflixMessageType.success);
+            _navigationManager.NavigateTo("/Estudiantes");
+            return;
+        }
+        else
+        {
+            {
+                await _jsRuntime.NotiflixReportAlert("Error", result.Error, NotiflixMessageType.failure);
+            }
+
+        }
+    }
+}

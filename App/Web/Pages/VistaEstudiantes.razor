@@ -1,0 +1,110 @@
+﻿@page "/Estudiantes"
+@using Domain.Dto.Estudiantes
+
+@inject EstudianteService _service
+
+<div class="row">
+    <h2>Estudiantes</h2>
+
+    <div class="d-flex justify-content-center mt-3 mb-3" style="gap: 10px">
+        <button type="button" class="btn btn-primary" @onclick=@(() => _navigationManager.NavigateTo("/NuevoEstudiante"))>Nuevo Estudiante</button>
+    </div>
+
+    <div class="col-md-12">
+        @if (!_isLoading)
+        {
+            <RadzenDataGrid AllowFiltering="true"
+                            AllowColumnResize="true"
+                            AllowAlternatingRows="false"
+                            FilterMode="FilterMode.Advanced"
+                            AllowSorting="true" PageSize="5"
+                            AllowPaging="true"
+                            PagerHorizontalAlign="HorizontalAlign.Left"
+                            ShowPagingSummary="true"
+                            Data="@_estudiantes"
+                            ColumnWidth="300px"
+                            LogicalFilterOperator="LogicalFilterOperator.Or"
+                            SelectionMode="DataGridSelectionMode.Single">
+                <Columns>
+                    <RadzenDataGridColumn TItem="EstudianteDto" Title="" Width="90px">
+                        <Template Context="data">
+                            <RadzenButton Icon="edit" Click=@(_ => _navigationManager.NavigateTo($"/ActualizarEstudiante/{data.Id}")) />
+                            <RadzenButton Icon="delete" Click=@(_ => Eliminar(data)) />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="EstudianteDto" Property="NumeroDocumento" Title="Número de Documento" Width="160px" />
+                    <RadzenDataGridColumn TItem="EstudianteDto" Property="Nombres" Title="Nombres" Width="160px" />
+                    <RadzenDataGridColumn TItem="EstudianteDto" Property="Apellidos" Title="Apellidos" Width="160px" />
+                    <RadzenDataGridColumn TItem="EstudianteDto" Property="Correo" Title="Correo" Width="160px" />
+                    <RadzenDataGridColumn TItem="EstudianteDto" Property="FechaIngreso" Title="Fecha Ingreso" Width="160px" />
+
+                </Columns>
+            </RadzenDataGrid>
+        }
+
+    </div>
+    
+</div>
+
+
+
+@code {
+    private IEnumerable<EstudianteDto> _estudiantes;
+
+    private bool _isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isLoading = true;
+            StateHasChanged();
+
+            await _jsRuntime.NotiflixLoading(NotiflixLoadingType.hourglass, "Cargando registros");
+
+            var result = await _service.GetEstudiantes();
+
+            if (result.IsSuccess)
+            {
+                _estudiantes = result.Value;
+            }
+            else
+            {
+                await _jsRuntime.NotiflixReportAlert("Error", result.Error, NotiflixMessageType.failure);
+            }
+
+            await _jsRuntime.NotiflixRemoveLoading();
+
+            _isLoading = false;
+            StateHasChanged();
+        }
+
+    }
+
+
+    private async Task Eliminar(EstudianteDto data)
+    {
+        bool resultado = await _jsRuntime.NotiflixConfirmShow("Eliminar estudiante", "¿Está seguro de eliminar este registro?");
+
+        if (!resultado)
+        {
+            return;
+        }
+
+        var result = await _service.EliminarEstudiante(data.Id);
+
+        if (result.IsSuccess)
+        {
+            await _jsRuntime.NotiflixReportAlertWithCallback("Correcto", "Estudiante eliminado exitosamente", NotiflixMessageType.success);
+            _navigationManager.NavigateTo("/Estudiantes", forceLoad: true);
+            return;
+        }
+        else
+        {
+            {
+                await _jsRuntime.NotiflixReportAlert("Error", result.Error, NotiflixMessageType.failure);
+            }
+
+        }
+    }
+}
